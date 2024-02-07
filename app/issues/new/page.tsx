@@ -22,7 +22,7 @@ const NewIssuePage = () => {
   const [error, setError] = useState("");
   const  [ isSubmit , setIsSubmit] = useState(false)
 
-  const onSubmit = async (data: IssueForm) => {
+  const onSubmit = handleSubmit( async (data) => {
     try {
         setIsSubmit(true)
       await axios.post("/api/issues", data);
@@ -31,7 +31,7 @@ const NewIssuePage = () => {
         setIsSubmit(false)
       setError("Something went wrong.");
     }
-  };
+  });
   return (
     <>
       {error && (
@@ -41,7 +41,7 @@ const NewIssuePage = () => {
       )}
       <form
         className="max-w-xl space-y-3"
-        onSubmit={handleSubmit((data) => onSubmit(data))}
+        onSubmit={onSubmit}
       >
         <TextField.Root>
           <TextField.Input placeholder="Title" {...register("title")} />
