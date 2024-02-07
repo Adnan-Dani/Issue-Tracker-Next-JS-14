@@ -1,17 +1,60 @@
-"use client"
-import { TextField, TextArea, Button } from '@radix-ui/themes'
-import React from 'react'
+"use client";
+import "easymde/dist/easymde.min.css";
+import SimpleMDE from "react-simplemde-editor";
+import { TextField, Button, Callout , Text } from "@radix-ui/themes";
+import { useRouter } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import axios from "axios";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createIssueSchema } from "@/app/validationSchema";
+import { z } from 'zod';
+
+type IssueForm =  z.infer<typeof createIssueSchema>
 
 const NewIssuePage = () => {
-    return (
-        <div className='max-w-xl space-y-3' >
-            <TextField.Root>
-                <TextField.Input placeholder='Title' />
-            </TextField.Root>
-            <TextArea placeholder="Description" />
-            <Button>Submit New Issue</Button>
-        </div>
-    )
-}
+  const { register, control, handleSubmit  , formState : { errors}} = useForm<IssueForm>( {
+    resolver: zodResolver(createIssueSchema)
+  });
+  const router = useRouter();
+  const [error, setError] = useState("");
 
-export default NewIssuePage
+  const onSubmit = async (data: IssueForm) => {
+    try {
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (err) {
+      setError("Something went wrong.");
+    }
+  };
+  return (
+    <>
+      {error && (
+        <Callout.Root>
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      )}
+      <form
+        className="max-w-xl space-y-3"
+        onSubmit={handleSubmit((data) => onSubmit(data))}
+      >
+        <TextField.Root>
+          <TextField.Input placeholder="Title" {...register("title")} />
+        </TextField.Root>
+        { errors.title && <Text as="p" color="red">{errors.title.message}</Text>}
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <SimpleMDE placeholder="Description" {...field} />
+          )}
+        />
+        { errors.description && <Text as="p" color="red">{errors.description.message}</Text>}
+
+        <Button>Submit New Issue</Button>
+      </form>
+    </>
+  );
+};
+
+export default NewIssuePage;
