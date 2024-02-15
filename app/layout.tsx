@@ -1,6 +1,6 @@
-import '@radix-ui/themes/styles.css';
-import './theme.config.css'
-import { Theme, ThemePanel } from '@radix-ui/themes';
+import "@radix-ui/themes/styles.css";
+import "./theme.config.css";
+import { Theme, Container } from "@radix-ui/themes";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -8,7 +8,7 @@ import NavBar from "./NavBar";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: '--font-inter'
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -27,8 +27,8 @@ export default function RootLayout({
         <Theme appearance="light" accentColor="violet">
           {/* <Theme> */}
           <NavBar />
-          <main className='p-5'>
-            {children}
+          <main className="p-5">
+            <Container>{children}</Container>
           </main>
           {/* <ThemePanel /> */}
         </Theme>
