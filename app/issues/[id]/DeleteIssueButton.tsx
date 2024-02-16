@@ -2,13 +2,19 @@
 import { Button, AlertDialog, Flex } from "@radix-ui/themes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
   const router = useRouter();
+  const [error, setError] = useState(false);
   const handleClick = async () => {
-    await axios.delete("/api/issues/" + issueId);
-    router.push("/issues");
-    router.refresh();
+    try {
+      await axios.delete("/api/issues/" + issueId);
+      router.push("/issues");
+      router.refresh();
+    } catch (error) {
+      setError(true);
+    }
   };
   return (
     <>
@@ -16,7 +22,7 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
         <AlertDialog.Trigger>
           <Button color="red">Delete Issue </Button>
         </AlertDialog.Trigger>
-        <AlertDialog.Content style={{ maxWidth: 450 }}>
+        <AlertDialog.Content>
           <AlertDialog.Title>Confirm Deletion</AlertDialog.Title>
           <AlertDialog.Description size="2">
             Are you sure you want to delete this? this action cannot be undone.
@@ -33,6 +39,18 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
               </Button>
             </AlertDialog.Action>
           </Flex>
+        </AlertDialog.Content>
+      </AlertDialog.Root>
+      <AlertDialog.Root open={error}>
+        <AlertDialog.Content>
+          <AlertDialog.Title>Error</AlertDialog.Title>
+          <AlertDialog.Description size="2">
+            This issue could not be deleted.
+          </AlertDialog.Description>
+
+          <Button variant="soft" color="gray" onClick={() => setError(false)}>
+            Ok
+          </Button>
         </AlertDialog.Content>
       </AlertDialog.Root>
     </>
