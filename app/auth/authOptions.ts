@@ -1,7 +1,7 @@
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/prisma/client";
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from "next-auth"; 
 
 const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -15,5 +15,6 @@ const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
 };
+console.log(process.env.NETAUTH_SECRET);
 
 export default authOptions;
